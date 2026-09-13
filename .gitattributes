@@ -1,0 +1,3 @@
+*.pdf binary
+*.odt binary
+*.mmdb diff=mmdb
