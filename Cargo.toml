@@ -1,0 +1,37 @@
+[package]
+name = "vpndetection-axum"
+version = "1.0.0"
+edition = "2024"
+rust-version = "1.85"
+description = "The official axum and tower middleware for the VPNDetection API: classify the visitor behind each request as VPN, residential proxy, Tor, hosting, CDN or relay, and optionally refuse them."
+authors = ["VPNDetection <support@vpndetection.io>"]
+license = "MIT"
+readme = "README.md"
+homepage = "https://vpndetection.io"
+repository = "https://github.com/vpndetection-io/sdk-rust-axum"
+documentation = "https://docs.rs/vpndetection-axum"
+keywords = ["vpn", "proxy", "tor", "axum", "middleware"]
+categories = ["web-programming", "network-programming", "api-bindings"]
+exclude = ["/.github"]
+
+[dependencies]
+axum = { version = "0.8", default-features = false, features = ["tokio"] }
+futures-util = { version = "0.3", default-features = false, features = ["std"] }
+http = "1"
+tower-layer = "0.3"
+tower-service = "0.3"
+vpndetection = "3.2"
+
+[dev-dependencies]
+axum = { version = "0.8", features = ["json", "tokio", "http1"] }
+serde_json = "1"
+tokio = { version = "1", features = ["macros", "net", "rt-multi-thread"] }
+tower = { version = "0.5", features = ["util"] }
+
+[features]
+default = ["rustls-tls"]
+rustls-tls = ["vpndetection/rustls-tls"]
+native-tls = ["vpndetection/native-tls"]
+
+[package.metadata.docs.rs]
+all-features = true
