@@ -1,6 +1,6 @@
 [package]
 name = "vpndetection-axum"
-version = "2.0.0"
+version = "3.0.0"
 edition = "2024"
 rust-version = "1.85"
 description = "The official axum and tower middleware for the VPNDetection API: classify the visitor behind each request as VPN, residential proxy, Tor, hosting, CDN or relay, and optionally refuse them."
@@ -20,7 +20,7 @@ futures-util = { version = "0.3", default-features = false, features = ["std"] }
 http = "1"
 tower-layer = "0.3"
 tower-service = "0.3"
-vpndetection = "4.0"
+vpndetection = "5.0"
 
 [dev-dependencies]
 axum = { version = "0.8", features = ["json", "tokio", "http1"] }
