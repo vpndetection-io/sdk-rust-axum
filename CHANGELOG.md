@@ -2,6 +2,12 @@
 
 What each release changed for you, newest first. Each line is a commit's summary, linked to its full description and diff. Releases before 3.0.3 are described by their release commits.
 
+## 3.0.4 - 2026-09-26
+
+### Fixes
+
+- Require vpndetection 5.2.4: download_bytes no longer aborts the process ([`7fe52a8`](https://github.com/vpndetection-io/sdk-rust-axum/commit/7fe52a8acb043fe78251c62e06e458780da9decb))
+
 ## 3.0.3 - 2026-09-25
 
 ### Fixes
