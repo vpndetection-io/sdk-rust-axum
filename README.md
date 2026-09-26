@@ -1,4 +1,4 @@
-# [<img src="https://s3.vpndetection.io/vpndetection-public/brand/mark.svg" alt="VPNDetection" width="24"/>](https://vpndetection.io/) VPNDetection axum Middleware
+# [<img src="https://s3.vpndetection.io/vpndetection-public/brand/mark.svg" alt="VPNDetection" height="28"/>](https://vpndetection.io/) VPNDetection axum Middleware
 
 [![crates.io](https://img.shields.io/crates/v/vpndetection-axum.svg)](https://crates.io/crates/vpndetection-axum)
 [![docs.rs](https://img.shields.io/docsrs/vpndetection-axum)](https://docs.rs/vpndetection-axum)
