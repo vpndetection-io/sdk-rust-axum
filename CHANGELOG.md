@@ -2,6 +2,12 @@
 
 What each release changed for you, newest first. Each line is a commit's summary, linked to its full description and diff. Releases before 3.0.3 are described by their release commits.
 
+## 3.0.5 - 2026-09-27
+
+### Features
+
+- Require vpndetection 5.3.0: OauthMetadata carries client_id_metadata_document_supported ([`d2c76e0`](https://github.com/vpndetection-io/sdk-rust-axum/commit/d2c76e07037b7320f6f8da798a64b0ab970b13ca))
+
 ## 3.0.4 - 2026-09-26
 
 ### Fixes
