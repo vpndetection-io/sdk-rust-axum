@@ -20,7 +20,7 @@ futures-util = { version = "0.3", default-features = false, features = ["std"] }
 http = "1"
 tower-layer = "0.3"
 tower-service = "0.3"
-vpndetection = "5.2.4"
+vpndetection = "5.3.0"
 
 [dev-dependencies]
 axum = { version = "0.8", features = ["json", "tokio", "http1"] }
