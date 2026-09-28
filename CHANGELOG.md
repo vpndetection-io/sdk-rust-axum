@@ -2,6 +2,12 @@
 
 What each release changed for you, newest first. Each line is a commit's summary, linked to its full description and diff. Releases before 3.0.3 are described by their release commits.
 
+## 3.0.6 - 2026-09-28
+
+### Fixes
+
+- Require vpndetection 5.3.1: IPv4-mapped visitors are looked up, not waved through ([`b968999`](https://github.com/vpndetection-io/sdk-rust-axum/commit/b96899925254e1639e92de2fecb52f17decd4562))
+
 ## 3.0.5 - 2026-09-27
 
 ### Features
