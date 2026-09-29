@@ -174,7 +174,7 @@ vpndetection_axum::VPNDetection::new(Options::new())?
 
 If you already hold a `vpndetection::Client`, pass it as `client` and the middleware will share it rather than building a second cache.
 
-Beyond a few million distinct visitors a day, stop calling the API per request: [download the dataset](https://vpndetection.io/databases) and look addresses up locally instead.
+Beyond a few million distinct visitors a day, stop calling the API per request: [download the dataset](https://vpndetection.io/#databases) and look addresses up locally instead.
 
 ## Absent is not false
 
