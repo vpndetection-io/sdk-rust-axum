@@ -2,6 +2,12 @@
 
 What each release changed for you, newest first. Each line is a commit's summary, linked to its full description and diff. Releases before 3.0.3 are described by their release commits.
 
+## 3.0.8 - 2026-10-02
+
+### Fixes
+
+- Require vpndetection 5.3.3: tokio and chrono floors past their advisories ([`db21ce8`](https://github.com/vpndetection-io/sdk-rust-axum/commit/db21ce80ba3a2d136679996157cac873dcbcb89f))
+
 ## 3.0.7 - 2026-09-29
 
 ### Fixes
