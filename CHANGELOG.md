@@ -2,6 +2,12 @@
 
 What each release changed for you, newest first. Each line is a commit's summary, linked to its full description and diff. Releases before 3.0.3 are described by their release commits.
 
+## 3.0.9 - 2026-10-04
+
+### Fixes
+
+- Require vpndetection 5.3.4, re-pinned to spec 2026.10.03 ([`70e29f1`](https://github.com/vpndetection-io/sdk-rust-axum/commit/70e29f1f59ae3556fc92e9d042e6afea3cf68c03))
+
 ## 3.0.8 - 2026-10-02
 
 ### Fixes
