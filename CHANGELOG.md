@@ -2,6 +2,12 @@
 
 What each release changed for you, newest first. Each line is a commit's summary, linked to its full description and diff. Releases before 3.0.3 are described by their release commits.
 
+## 3.0.11 - 2026-10-09
+
+### Fixes
+
+- Require vpndetection 5.4.1: an unreadable download link is retried ([`fe3bfb6`](https://github.com/vpndetection-io/sdk-rust-axum/commit/fe3bfb6f53faa7eb745b50d613211029e4fb9d4a))
+
 ## 3.0.10 - 2026-10-05
 
 ### Features
