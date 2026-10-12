@@ -117,7 +117,7 @@ vpndetection_axum::VPNDetection::new(Options::new())?
 
 This is the setting that decides whether any of the above works, and it is the one thing only you can get right.
 
-By default the middleware reads axum's `ConnectInfo<SocketAddr>`, which is the socket peer — and which is **absent entirely unless you serve the app with `into_make_service_with_connect_info`**, as the example above does. Behind nginx, a load balancer, or a CDN, that peer is your proxy: a datacenter address, so a hosting rule would block every visitor you have.
+By default the middleware reads axum's `ConnectInfo<SocketAddr>`, which is the socket peer — and which is **absent entirely unless you serve the app with `into_make_service_with_connect_info`**, as the example above does. Behind nginx, a load balancer, or a CDN, that peer is your proxy, and that is the address that gets checked: VPN visitors pass unnoticed, and if it is a hosting address, a hosting rule blocks everyone. nginx on the same machine is `127.0.0.1` and a load balancer usually has a private address, which the middleware answers locally without a lookup, flagging nobody and logging a warning.
 
 For an edge that writes the address into its own header, name the header:
 
