@@ -2,6 +2,12 @@
 
 What each release changed for you, newest first. Each line is a commit's summary, linked to its full description and diff. Releases before 3.0.3 are described by their release commits.
 
+## 3.0.14 - 2026-10-17
+
+### Fixes
+
+- Require vpndetection 5.5.0: builds beside reqwest 0.13.2 and newer ([`8e5f29a`](https://github.com/vpndetection-io/sdk-rust-axum/commit/8e5f29ab17f01075b9c4525c4ca83d5bfb590e5a))
+
 ## 3.0.13 - 2026-10-16
 
 ### Fixes
