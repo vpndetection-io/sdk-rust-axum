@@ -2,6 +2,12 @@
 
 What each release changed for you, newest first. Each line is a commit's summary, linked to its full description and diff. Releases before 3.0.3 are described by their release commits.
 
+## 3.0.15 - 2026-10-18
+
+### Fixes
+
+- Require vpndetection 5.6.0: is_pubproxy and the pubproxy detail ([`d1e1ca0`](https://github.com/vpndetection-io/sdk-rust-axum/commit/d1e1ca0e0067324e8777d4d19a19733ac1da85dd))
+
 ## 3.0.14 - 2026-10-17
 
 ### Fixes
