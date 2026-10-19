@@ -2,6 +2,12 @@
 
 What each release changed for you, newest first. Each line is a commit's summary, linked to its full description and diff. Releases before 3.0.3 are described by their release commits.
 
+## 3.0.16 - 2026-10-19
+
+### Fixes
+
+- Require vpndetection 5.7.0: num_ports and num_proxies in the pubproxy detail ([`6f64304`](https://github.com/vpndetection-io/sdk-rust-axum/commit/6f643047c647843e44fdef8ff4b3b819bcded530))
+
 ## 3.0.15 - 2026-10-18
 
 ### Fixes
