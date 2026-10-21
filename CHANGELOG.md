@@ -2,6 +2,12 @@
 
 What each release changed for you, newest first. Each line is a commit's summary, linked to its full description and diff. Releases before 3.0.3 are described by their release commits.
 
+## 3.0.18 - 2026-10-21
+
+### Fixes
+
+- Require vpndetection 5.9.0, which adds oauth().register ([`7c7b468`](https://github.com/vpndetection-io/sdk-rust-axum/commit/7c7b468df8957a827053a0e3f50d7960691067db))
+
 ## 3.0.17 - 2026-10-20
 
 ### Features
