@@ -10,6 +10,8 @@ use std::net::SocketAddr;
 use std::sync::atomic::{AtomicUsize, Ordering};
 use std::sync::{Arc, Mutex};
 
+use tokio::io::{AsyncReadExt, AsyncWriteExt};
+
 use axum::Router;
 use axum::body::Body;
 use axum::extract::{ConnectInfo, State};
@@ -281,6 +283,44 @@ async fn found_rejects_where_the_layer_is_not_mounted() {
     let (status, _) = call(unguarded, "/", Some(PUBLIC_IP), &[]).await;
 
     assert_eq!(status, StatusCode::INTERNAL_SERVER_ERROR, "a wiring mistake, not a visitor's");
+}
+
+/// Built exactly as the README builds it, an API key and nothing else, and
+/// served through `into_make_service_with_connect_info` on a real socket.
+/// Every other test here hands the layer a stub's base URL. The visitor is the
+/// loopback, a bogon answered locally, so the default API is never asked.
+#[tokio::test]
+async fn the_readme_build_serves_a_request() {
+    for options in [Options::new().api_key("key"), Options::new()] {
+        let guard = VPNDetection::new(options).expect("build");
+        let app = Router::new()
+            .route(
+                "/",
+                get(|Found(found): Found| async move {
+                    let result = found.result.as_ref().expect("a result");
+                    format!("bogon={} vpn={}", result.is_bogon, result.is_vpn)
+                }),
+            )
+            .layer(guard);
+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.expect("bind");
+        let addr = listener.local_addr().expect("addr");
+        tokio::spawn(async move {
+            axum::serve(listener, app.into_make_service_with_connect_info::<SocketAddr>())
+                .await
+                .expect("serve");
+        });
+
+        let mut socket = tokio::net::TcpStream::connect(addr).await.expect("connect");
+        socket
+            .write_all(b"GET / HTTP/1.1\r\nHost: app\r\nConnection: close\r\n\r\n")
+            .await
+            .expect("send");
+        let mut answer = String::new();
+        socket.read_to_string(&mut answer).await.expect("read");
+
+        assert!(answer.starts_with("HTTP/1.1 200"), "{answer}");
+        assert!(answer.ends_with("bogon=true vpn=false"), "{answer}");
+    }
 }
 
 #[tokio::test]
