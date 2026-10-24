@@ -2,6 +2,12 @@
 
 What each release changed for you, newest first. Each line is a commit's summary, linked to its full description and diff. Releases before 3.0.3 are described by their release commits.
 
+## 3.0.20 - 2026-10-24
+
+### Fixes
+
+- Require vpndetection 5.9.2, which requires tokio 1.53.3 ([`4f5103d`](https://github.com/vpndetection-io/sdk-rust-axum/commit/4f5103d3da40d989766577f4bbacbad36729f1d3))
+
 ## 3.0.19 - 2026-10-23
 
 ### Fixes
