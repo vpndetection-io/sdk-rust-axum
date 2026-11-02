@@ -2,6 +2,12 @@
 
 What each release changed for you, newest first. Each line is a commit's summary, linked to its full description and diff. Releases before 3.0.3 are described by their release commits.
 
+## 3.0.23 - 2026-11-02
+
+### Fixes
+
+- Require vpndetection 5.9.5: a metadata sample row that is no object is refused ([`1dc6999`](https://github.com/vpndetection-io/sdk-rust-axum/commit/1dc6999400a03c7316d12dbf6502599749110f73))
+
 ## 3.0.22 - 2026-10-30
 
 ### Fixes
