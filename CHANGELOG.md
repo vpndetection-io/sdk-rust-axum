@@ -2,6 +2,12 @@
 
 What each release changed for you, newest first. Each line is a commit's summary, linked to its full description and diff. Releases before 3.0.3 are described by their release commits.
 
+## 3.0.24 - 2026-11-04
+
+### Fixes
+
+- Require vpndetection 5.9.6, which fails only the address of a batch entry it cannot read ([`ba0d9f3`](https://github.com/vpndetection-io/sdk-rust-axum/commit/ba0d9f33735aec86ff49fac9edb69faeb8503767))
+
 ## 3.0.23 - 2026-11-02
 
 ### Fixes
