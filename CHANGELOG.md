@@ -2,6 +2,12 @@
 
 What each release changed for you, newest first. Each line is a commit's summary, linked to its full description and diff. Releases before 3.0.3 are described by their release commits.
 
+## 3.0.25 - 2026-11-07
+
+### Features
+
+- Require vpndetection 5.10.0: downloads take the build a webhook names ([`31ec68d`](https://github.com/vpndetection-io/sdk-rust-axum/commit/31ec68d745c51994dc86ddbd090f49623e36458f))
+
 ## 3.0.24 - 2026-11-04
 
 ### Fixes
