@@ -2,6 +2,12 @@
 
 What each release changed for you, newest first. Each line is a commit's summary, linked to its full description and diff. Releases before 3.0.3 are described by their release commits.
 
+## 3.0.30 - 2026-11-11
+
+### Fixes
+
+- Require vpndetection 5.12.1: the free plan's daily trial, never a trial key ([`a9a5083`](https://github.com/vpndetection-io/sdk-rust-axum/commit/a9a5083b7d7d43d4aadefbd65c1aa0441039ab20))
+
 ## 3.0.29 - 2026-11-11
 
 ### Features
