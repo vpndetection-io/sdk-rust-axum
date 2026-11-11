@@ -2,6 +2,12 @@
 
 What each release changed for you, newest first. Each line is a commit's summary, linked to its full description and diff. Releases before 3.0.3 are described by their release commits.
 
+## 3.0.26 - 2026-11-11
+
+### Features
+
+- Require vpndetection 5.11.0: a lookup without a key answers more ([`9301ee2`](https://github.com/vpndetection-io/sdk-rust-axum/commit/9301ee260b353562bb527e71e0d33a83171088ff))
+
 ## 3.0.25 - 2026-11-07
 
 ### Features
