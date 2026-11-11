@@ -2,6 +2,12 @@
 
 What each release changed for you, newest first. Each line is a commit's summary, linked to its full description and diff. Releases before 3.0.3 are described by their release commits.
 
+## 3.0.28 - 2026-11-11
+
+### Fixes
+
+- Require vpndetection 5.11.2: the Unlimited tier and its terms ([`c3687c7`](https://github.com/vpndetection-io/sdk-rust-axum/commit/c3687c77b3694195471fbf0d85f6534bc51ee15d))
+
 ## 3.0.27 - 2026-11-11
 
 ### Fixes
