@@ -2,6 +2,12 @@
 
 What each release changed for you, newest first. Each line is a commit's summary, linked to its full description and diff. Releases before 3.0.3 are described by their release commits.
 
+## 3.0.29 - 2026-11-11
+
+### Features
+
+- Require vpndetection 5.12.0: trial_expired on a trial key's answers ([`e8d52ff`](https://github.com/vpndetection-io/sdk-rust-axum/commit/e8d52ff4bc56e7964239fbf8225ff5ac8b68f34f))
+
 ## 3.0.28 - 2026-11-11
 
 ### Fixes
