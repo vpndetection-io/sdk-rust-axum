@@ -2,6 +2,12 @@
 
 What each release changed for you, newest first. Each line is a commit's summary, linked to its full description and diff. Releases before 3.0.3 are described by their release commits.
 
+## 3.0.31 - 2026-11-14
+
+### Fixes
+
+- Require vpndetection 5.13.0: is_bogon on every answer, and provider_name beside each provider ([`4c5858e`](https://github.com/vpndetection-io/sdk-rust-axum/commit/4c5858e023893cdc2ad2759fa4c3a1b17d36f808))
+
 ## 3.0.30 - 2026-11-11
 
 ### Fixes
