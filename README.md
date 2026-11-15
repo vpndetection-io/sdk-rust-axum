@@ -13,7 +13,7 @@ It is a `tower::Layer`, so it works in any tower stack, not only axum.
 ## Getting Started
 
 ```bash
-cargo add vpndetection-axum
+cargo add vpndetection-axum vpndetection
 ```
 
 Requires Rust 1.85 or newer, and axum 0.8.

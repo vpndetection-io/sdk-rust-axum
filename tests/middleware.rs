@@ -31,21 +31,24 @@ const PUBLIC_IP: &str = "45.83.91.1";
 struct Api {
     base_url: String,
     asked: Arc<Mutex<Vec<String>>>,
+    authorizations: Arc<Mutex<Vec<Option<String>>>>,
 }
 
 impl Api {
     async fn serving(body: Value, status: StatusCode) -> Self {
         let asked = Arc::new(Mutex::new(Vec::new()));
+        let authorizations = Arc::new(Mutex::new(Vec::new()));
         let app = Router::new().route("/{ip}", get(answer)).with_state(Canned {
             body,
             status,
             asked: Arc::clone(&asked),
+            authorizations: Arc::clone(&authorizations),
         });
 
         let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.expect("bind");
         let addr = listener.local_addr().expect("addr");
         tokio::spawn(async move { axum::serve(listener, app).await.expect("serve") });
-        Self { base_url: format!("http://{addr}"), asked }
+        Self { base_url: format!("http://{addr}"), asked, authorizations }
     }
 
     async fn ok(body: Value) -> Self {
@@ -54,6 +57,10 @@ impl Api {
 
     fn asked(&self) -> Vec<String> {
         self.asked.lock().unwrap().clone()
+    }
+
+    fn authorizations(&self) -> Vec<Option<String>> {
+        self.authorizations.lock().unwrap().clone()
     }
 
     fn options(&self) -> Options {
@@ -66,13 +73,21 @@ struct Canned {
     body: Value,
     status: StatusCode,
     asked: Arc<Mutex<Vec<String>>>,
+    authorizations: Arc<Mutex<Vec<Option<String>>>>,
 }
 
 async fn answer(
     State(canned): State<Canned>,
     axum::extract::Path(ip): axum::extract::Path<String>,
+    headers: http::HeaderMap,
 ) -> impl IntoResponse {
     canned.asked.lock().unwrap().push(ip.clone());
+    let authorization = headers.get(http::header::AUTHORIZATION);
+    canned
+        .authorizations
+        .lock()
+        .unwrap()
+        .push(authorization.and_then(|v| v.to_str().ok()).map(str::to_owned));
     let mut body = canned.body.clone();
     if let Some(object) = body.as_object_mut() {
         object.insert("ip".into(), json!(ip));
@@ -320,6 +335,27 @@ async fn the_readme_build_serves_a_request() {
 
         assert!(answer.starts_with("HTTP/1.1 200"), "{answer}");
         assert!(answer.ends_with("bogon=true vpn=false"), "{answer}");
+    }
+}
+
+/// The README's build again, from a PUBLIC peer with a forged
+/// `X-Forwarded-For`, the lookup answered by a recording stub: a layer that
+/// dropped the key, or read the header by default, would pass the test above,
+/// since a loopback peer is answered with no request.
+#[tokio::test]
+async fn the_readme_key_reaches_the_api_for_a_public_peer() {
+    for (options, sent) in [(Options::new().api_key("key"), Some("Bearer key")), (Options::new(), None)] {
+        let api = Api::ok(json!({ "is_vpn": false })).await;
+        let app = app(VPNDetection::new(options.base_url(&api.base_url)).expect("build"));
+
+        let (status, body) =
+            call(app, "/x", Some(PUBLIC_IP), &[("X-Forwarded-For", "1.1.1.1")]).await;
+
+        assert_eq!(status, StatusCode::OK);
+        assert_eq!(body["ip"], json!(PUBLIC_IP), "the default is the socket peer, never the header");
+        assert_eq!(body["is_vpn"], json!(false));
+        assert_eq!(api.asked(), vec![PUBLIC_IP]);
+        assert_eq!(api.authorizations(), vec![sent.map(str::to_owned)], "the key must reach the API");
     }
 }
 
