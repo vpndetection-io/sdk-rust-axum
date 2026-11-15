@@ -2,6 +2,12 @@
 
 What each release changed for you, newest first. Each line is a commit's summary, linked to its full description and diff. Releases before 3.0.3 are described by their release commits.
 
+## 3.0.32 - 2026-11-15
+
+### Fixes
+
+- README: add both crates, since the examples name the base crate ([`5b62a35`](https://github.com/vpndetection-io/sdk-rust-axum/commit/5b62a3569c6f7c272fcf7c220bf6824963771ddb))
+
 ## 3.0.31 - 2026-11-14
 
 ### Fixes
