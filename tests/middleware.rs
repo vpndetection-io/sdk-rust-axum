@@ -344,7 +344,9 @@ async fn the_readme_build_serves_a_request() {
 /// since a loopback peer is answered with no request.
 #[tokio::test]
 async fn the_readme_key_reaches_the_api_for_a_public_peer() {
-    for (options, sent) in [(Options::new().api_key("key"), Some("Bearer key")), (Options::new(), None)] {
+    for (options, sent) in
+        [(Options::new().api_key("key"), Some("Bearer key")), (Options::new(), None)]
+    {
         let api = Api::ok(json!({ "is_vpn": false })).await;
         let app = app(VPNDetection::new(options.base_url(&api.base_url)).expect("build"));
 
@@ -352,10 +354,18 @@ async fn the_readme_key_reaches_the_api_for_a_public_peer() {
             call(app, "/x", Some(PUBLIC_IP), &[("X-Forwarded-For", "1.1.1.1")]).await;
 
         assert_eq!(status, StatusCode::OK);
-        assert_eq!(body["ip"], json!(PUBLIC_IP), "the default is the socket peer, never the header");
+        assert_eq!(
+            body["ip"],
+            json!(PUBLIC_IP),
+            "the default is the socket peer, never the header"
+        );
         assert_eq!(body["is_vpn"], json!(false));
         assert_eq!(api.asked(), vec![PUBLIC_IP]);
-        assert_eq!(api.authorizations(), vec![sent.map(str::to_owned)], "the key must reach the API");
+        assert_eq!(
+            api.authorizations(),
+            vec![sent.map(str::to_owned)],
+            "the key must reach the API"
+        );
     }
 }
 
