@@ -2,6 +2,12 @@
 
 What each release changed for you, newest first. Each line is a commit's summary, linked to its full description and diff. Releases before 3.0.3 are described by their release commits.
 
+## 4.0.0 - 2026-11-16
+
+### Breaking changes
+
+- Require vpndetection 6.0.0: a vocabulary value the API adds comes back as served ([`cb19041`](https://github.com/vpndetection-io/sdk-rust-axum/commit/cb1904157322f7cf0c01d040754d354d25d4255e))
+
 ## 3.0.33 - 2026-11-16
 
 ### Fixes
