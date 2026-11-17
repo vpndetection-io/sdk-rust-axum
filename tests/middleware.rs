@@ -417,3 +417,22 @@ async fn corpus_conditions() {
         }
     }
 }
+
+// The base refuses these in Core::new, and this pins that the adapter's own
+// constructor reaches that check rather than building a guard that blocks every
+// request.
+#[test]
+fn corpus_refuses_a_condition_that_constrains_nothing() {
+    let corpus: Value =
+        serde_json::from_str(include_str!("../testdata/testdata.json")).expect("the corpus");
+    let cases = corpus["middleware"]["invalidConditions"].as_array().expect("invalidConditions");
+    assert!(!cases.is_empty());
+    for case in cases {
+        let why = format!("{}: {}", case["name"], case["why"]);
+        let condition = from_json(&case["condition"]).expect("a readable condition");
+        let Err(error) = VPNDetection::new(Options::new().block_condition(condition)) else {
+            panic!("accepted a condition that constrains nothing ({why})");
+        };
+        assert!(error.to_string().contains("constrains nothing"), "{why}");
+    }
+}
