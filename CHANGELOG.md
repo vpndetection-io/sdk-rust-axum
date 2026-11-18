@@ -2,6 +2,12 @@
 
 What each release changed for you, newest first. Each line is a commit's summary, linked to its full description and diff. Releases before 3.0.3 are described by their release commits.
 
+## 4.0.1 - 2026-11-18
+
+### Fixes
+
+- Require vpndetection 6.1.0: cap_reached past a paid plan's overage cap ([`eeb5b4a`](https://github.com/vpndetection-io/sdk-rust-axum/commit/eeb5b4a62d342680b9d92fbe61c4cf2a159596c5))
+
 ## 4.0.0 - 2026-11-16
 
 ### Breaking changes
