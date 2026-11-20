@@ -4,9 +4,9 @@
 [![docs.rs](https://img.shields.io/docsrs/vpndetection-axum)](https://docs.rs/vpndetection-axum)
 [![license](https://img.shields.io/github/license/vpndetection-io/sdk-rust-axum.svg)](LICENSE)
 
-The official [axum](https://github.com/tokio-rs/axum) middleware for the [VPNDetection](https://vpndetection.io) API.
+The official [axum](https://github.com/tokio-rs/axum) middleware for the [VPNDetection](https://vpndetection.io) API: it checks each visitor's IP for VPN, Tor and proxy use, and can block them with a 403.
 
-It classifies the visitor behind each request — VPN, residential proxy, Tor, hosting, CDN, relay — and puts the answer on the request. Blocking is opt-in.
+It classifies the visitor behind each request as VPN, residential proxy, Tor, hosting, CDN or relay, and puts the answer on the request. Blocking is opt-in.
 
 It is a `tower::Layer`, so it works in any tower stack, not only axum.
 
@@ -18,7 +18,7 @@ cargo add vpndetection-axum vpndetection
 
 Requires Rust 1.85 or newer, and axum 0.8.
 
-You need an API key on a paid plan. Create one in the [console](https://app.vpndetection.io); without one a lookup is on Unlimited, the free plan, and leaves out the hosting, CDN and proxy flags, so a paid plan is what makes this usable in production rather than optional. A free account tries every field.
+No API key needed to start. Without one, a lookup is on Unlimited, the free plan, which answers VPN, Tor and relay detection with no daily or monthly cap. A paid plan's key adds the hosting, CDN and proxy flags and the provider behind each flag: create one in the [console](https://app.vpndetection.io). A free account tries every field.
 
 ```rust
 use axum::{Router, routing::get};
@@ -50,7 +50,7 @@ async fn hello(Found(found): Found) -> &'static str {
 }
 ```
 
-By default nothing is blocked. Every request carries a `Lookup` and your own handlers decide what that means — which is usually what you want, because whether a VPN visitor is a problem depends entirely on what they are doing.
+By default nothing is blocked. Every request carries a `Lookup` and your own code decides what to do with it, since whether a VPN visitor is a problem depends on what they're doing.
 
 `Found` rejects with `500` on a route the layer does not cover, which is a wiring mistake rather than something a visitor can cause. Use `MaybeFound` where that is deliberate.
 
@@ -115,9 +115,9 @@ vpndetection_axum::VPNDetection::new(Options::new())?
 
 ## Where the client address comes from
 
-This is the setting that decides whether any of the above works, and it is the one thing only you can get right.
+Get this setting right, or none of the above works.
 
-By default the middleware reads axum's `ConnectInfo<SocketAddr>`, which is the socket peer — and which is **absent entirely unless you serve the app with `into_make_service_with_connect_info`**, as the example above does. Behind nginx, a load balancer, or a CDN, that peer is your proxy, and that is the address that gets checked: VPN visitors pass unnoticed, and if it is a hosting address, a hosting rule blocks everyone. nginx on the same machine is `127.0.0.1` and a load balancer usually has a private address, which the middleware answers locally without a lookup, flagging nobody and logging a warning.
+By default the middleware reads axum's `ConnectInfo<SocketAddr>`, which is the socket peer, and which is **absent entirely unless you serve the app with `into_make_service_with_connect_info`**, as the example above does. Behind nginx, a load balancer, or a CDN, that peer is your proxy, and that is the address that gets checked: VPN visitors pass unnoticed, and if it is a hosting address, a hosting rule blocks everyone. nginx on the same machine is `127.0.0.1` and a load balancer usually has a private address, which the middleware answers locally without a lookup, flagging nobody and logging a warning.
 
 For an edge that writes the address into its own header, name the header:
 
@@ -127,7 +127,7 @@ use vpndetection::middleware::{Options, header};
 Options::new().ip_selector(header("CF-Connecting-IP")); // or True-Client-IP
 ```
 
-`xff(0)` reads the left-most `X-Forwarded-For` entry. Be aware that the left-most entry is whatever the caller sent, because proxies append to that header — it is only trustworthy when an edge you control overwrites it. If you know how many proxies sit in front, count from the right instead: `xff(1)` is the address your nearest proxy saw.
+`xff(0)` reads the left-most `X-Forwarded-For` entry. The left-most entry is whatever the caller sent, since proxies append to that header, so trust it only when an edge you control overwrites it. If you know how many proxies sit in front, count from the right instead: `xff(1)` is the address your nearest proxy saw.
 
 Anything else, pass your own closure. It receives a `RequestView` and returns an address:
 
@@ -159,7 +159,7 @@ Set `fail_closed(true)` to block instead. Private addresses are answered locally
 
 ## Cost and latency
 
-Answers are cached per middleware for an hour, so a returning visitor costs nothing, and private addresses never leave the process. A cache miss is one request to our API, bounded at 2500 ms by default and not retried — on a request path, failing open quickly beats holding a visitor while we try again. Both are adjustable, and so is the cache, through a client you build yourself and pass as `client`.
+Answers are cached per middleware for an hour, so a returning visitor costs nothing, and private addresses never leave the process. A cache miss is one request to our API, bounded at 2500 ms by default and not retried: on a request path, failing open fast beats holding a visitor while we retry. Both are adjustable, and so is the cache, through a client you build yourself and pass as `client`.
 
 Layer the routes that matter rather than the whole router, or skip what you do not care about:
 
