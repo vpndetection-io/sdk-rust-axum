@@ -2,6 +2,12 @@
 
 What each release changed for you, newest first. Each line is a commit's summary, linked to its full description and diff. Releases before 3.0.3 are described by their release commits.
 
+## 4.0.3 - 2026-11-20
+
+### Features
+
+- Require vpndetection 6.2.0: the network, service, company and abuse members ([`7068698`](https://github.com/vpndetection-io/sdk-rust-axum/commit/7068698b9d109ca6fc20481334571a5277616f44))
+
 ## 4.0.2 - 2026-11-19
 
 ### Fixes
