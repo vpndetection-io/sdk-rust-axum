@@ -2,6 +2,12 @@
 
 What each release changed for you, newest first. Each line is a commit's summary, linked to its full description and diff. Releases before 3.0.3 are described by their release commits.
 
+## 4.0.4 - 2026-11-22
+
+### Features
+
+- Require vpndetection 6.3.0: is_bot and bot, and an AS without its country or RPKI status refused ([`2a7f766`](https://github.com/vpndetection-io/sdk-rust-axum/commit/2a7f76690a64413477dd6372a2bca0f92ddeac6a))
+
 ## 4.0.3 - 2026-11-20
 
 ### Features
