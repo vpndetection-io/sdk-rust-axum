@@ -18,7 +18,7 @@ cargo add vpndetection-axum vpndetection
 
 Requires Rust 1.85 or newer, and axum 0.8.
 
-No API key needed to start. Without one, a lookup is on Unlimited, the free plan, which answers VPN, Tor and relay detection with no daily or monthly cap. A paid plan's key adds the hosting, CDN and proxy flags and the provider behind each flag: create one in the [console](https://app.vpndetection.io). A free account tries every field.
+No API key needed to start. Without one, a lookup is on Unlimited, the free plan, which answers VPN, Tor, relay and bot detection with no daily or monthly cap. A paid plan's key adds the hosting, CDN and proxy flags, the provider behind each flag and `bot`, whose bot uses the address: create one in the [console](https://app.vpndetection.io). A free account tries every field.
 
 ```rust
 use axum::{Router, routing::get};
@@ -85,9 +85,12 @@ vec![
     Condition::from([("is_tor", true)]),
     Condition::from([("is_resproxy", true)]),
 ];
+
+// a bot whose operator vouches for the address, on a paid plan
+Condition::from([("bot", Condition::from([("verified", true)]))]);
 ```
 
-Values are matched by equality, strings without regard to case. A `Vec` means any-of. `Bound::gte`, `gt`, `lte` and `lt` compare numbers and chain into a range (`Bound::gte(5.0).and_lt(100.0)`); every bound you give must hold. Members set to `false` or `Value::Null` are ignored, so a condition states the signals you act on; one that constrains nothing would match every request, and is refused when the middleware is built rather than silently blocking all your traffic.
+Values are matched by equality, strings without regard to case. A `Vec` means any-of. `Bound::gte`, `gt`, `lte` and `lt` compare numbers and chain into a range (`Bound::gte(5.0).and_lt(100.0)`); every bound you give must hold. A member the answer holds as a list (`web`, `pubproxy.protocols`, `bittorrent.clients`, `bot.agents`, `bot.categories`) is never matched, so block on its flag alone (`is_bot`, on every plan). Members set to `false` or `Value::Null` are ignored, so a condition states the signals you act on; one that constrains nothing would match every request, and is refused when the middleware is built rather than silently blocking all your traffic.
 
 A policy that lives in your app's config rather than in its source is read with `from_json`, which takes the same shape:
 
@@ -178,7 +181,7 @@ Beyond a few million distinct visitors a day, stop calling the API per request: 
 
 ## Absent is not false
 
-Unlimited, with a key or without one, leaves out `is_hosting`, `is_cdn` and the four proxy flags, and of the detail behind each flag it answers only Tor's and relay's. A field your plan does not include is `None`, which means "not in your plan" rather than "checked, and no".
+Unlimited, with a key or without one, leaves out `is_hosting`, `is_cdn`, the four proxy flags, the carrier, satellite and service flags, `bot`, `company` and `abuse`, and of the detail behind each flag it answers only Tor's and relay's. A field your plan does not include is `None`, which means "not in your plan" rather than "checked, and no".
 
 ```rust
 # fn f(result: &vpndetection::Lookup) -> bool {

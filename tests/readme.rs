@@ -47,6 +47,9 @@ fn blocking() -> Result<(), Box<dyn std::error::Error>> {
     // a list is OR
     vec![Condition::from([("is_tor", true)]), Condition::from([("is_resproxy", true)])];
 
+    // a bot whose operator vouches for the address, on a paid plan
+    Condition::from([("bot", Condition::from([("verified", true)]))]);
+
     Bound::gte(5.0).and_lt(100.0);
 
     let condition = vpndetection::middleware::from_json(&serde_json::json!({
