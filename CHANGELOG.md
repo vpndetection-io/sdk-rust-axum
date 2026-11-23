@@ -2,6 +2,13 @@
 
 What each release changed for you, newest first. Each line is a commit's summary, linked to its full description and diff. Releases before 3.0.3 are described by their release commits.
 
+## 4.0.5 - 2026-11-23
+
+### Fixes
+
+- Require vpndetection 6.3.1: futures-util 0.3.31, past RUSTSEC-2020-0062 ([`3058197`](https://github.com/vpndetection-io/sdk-rust-axum/commit/305819738f0247a182e51d37325d7cc79f9ae323))
+- Require futures-util 0.3.31, past RUSTSEC-2020-0062 ([`c02d1de`](https://github.com/vpndetection-io/sdk-rust-axum/commit/c02d1de0c8b5070d2bebee00ab2760c71568d4a6))
+
 ## 4.0.4 - 2026-11-22
 
 ### Features
