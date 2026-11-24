@@ -102,6 +102,22 @@ let condition = vpndetection::middleware::from_json(&serde_json::json!({
 # Ok::<(), Box<dyn std::error::Error>>(())
 ```
 
+### Let verified crawlers through
+
+`allow_bots(true)` sends each request's own `User-Agent` with its lookup, and a request whose answer's `user_agent` verdict is `verified`, a real Googlebot say, is never refused, whatever `block_condition` matches. The answer still reaches your handler, its `user_agent` naming the agent and the verdict:
+
+```rust
+use vpndetection::middleware::{Condition, Options};
+
+Options::new()
+    .api_key(std::env::var("VPNDETECTION_API_KEY")?)
+    .allow_bots(true)
+    .block_condition(vec![Condition::from([("is_hosting", true)])]);
+# Ok::<(), Box<dyn std::error::Error>>(())
+```
+
+It is off by default, so the cache holds one answer per address rather than one per agent. A request without a `User-Agent` sends none. A verdict comes with a paid plan or the trial: without a key, or past the trial, no answer carries one, so nothing is let through and the middleware says so once, as `on_missing_field` says. With it on, a condition can name the verdict too: `Condition::from([("user_agent", Condition::from([("verdict", "spoofed")]))])` refuses a request posing as a crawler.
+
 Replace the refusal with `on_blocked`:
 
 ```rust

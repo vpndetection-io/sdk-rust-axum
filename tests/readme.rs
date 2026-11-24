@@ -57,6 +57,12 @@ fn blocking() -> Result<(), Box<dyn std::error::Error>> {
         "vpn": { "provider": ["nordvpn", "mullvad"] },
     }))?;
 
+    Options::new()
+        .api_key(std::env::var("VPNDETECTION_API_KEY")?)
+        .allow_bots(true)
+        .block_condition(vec![Condition::from([("is_hosting", true)])]);
+    Condition::from([("user_agent", Condition::from([("verdict", "spoofed")]))]);
+
     VPNDetection::new(Options::new())?.on_blocked(|_parts, _found| {
         (axum::http::StatusCode::FORBIDDEN, "VPN not allowed").into_response()
     });
