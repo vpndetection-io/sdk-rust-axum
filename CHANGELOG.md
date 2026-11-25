@@ -2,6 +2,12 @@
 
 What each release changed for you, newest first. Each line is a commit's summary, linked to its full description and diff. Releases before 3.0.3 are described by their release commits.
 
+## 4.0.8 - 2026-11-25
+
+### Fixes
+
+- Require vpndetection 6.5.1: the README and doc comments name the Data plan ([`d161e24`](https://github.com/vpndetection-io/sdk-rust-axum/commit/d161e2461b37dc7f296cd9fba94b8b5ef7b0b260))
+
 ## 4.0.7 - 2026-11-24
 
 ### Fixes
