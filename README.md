@@ -104,7 +104,7 @@ let condition = vpndetection::middleware::from_json(&serde_json::json!({
 
 ### Let verified crawlers through
 
-`allow_bots(true)` sends each request's own `User-Agent` with its lookup, and a request whose answer's `user_agent` verdict is `verified`, a real Googlebot say, is never refused, whatever `block_condition` matches. The answer still reaches your handler, its `user_agent` naming the agent and the verdict:
+`allow_bots(true)` sends a request's own `User-Agent` with its lookup when it names a crawler, and a request whose answer's `user_agent` verdict is `verified`, a real Googlebot say, is never refused, whatever `block_condition` matches. The answer still reaches your handler, its `user_agent` naming the agent and the verdict:
 
 ```rust
 use vpndetection::middleware::{Condition, Options};
@@ -116,7 +116,7 @@ Options::new()
 # Ok::<(), Box<dyn std::error::Error>>(())
 ```
 
-It is off by default, so the cache holds one answer per address rather than one per agent. A request without a `User-Agent` sends none. A verdict comes with a paid plan or the trial: without a key, or past the trial, no answer carries one, so nothing is let through and the middleware says so once, as `on_missing_field` says. With it on, a condition can name the verdict too: `Condition::from([("user_agent", Condition::from([("verdict", "spoofed")]))])` refuses a request posing as a crawler.
+It is off by default, so the cache holds one answer per address rather than one per agent. Any other agent, or none, is not sent, since its verdict could only be `not_bot`. One address is looked up with at most four crawler agents an hour: past those its lookup sends none, and a request passes as a crawler only where the answer's `bot.verified` is true. A verdict comes with a paid plan or the trial: without a key, or past the trial, no answer carries one, so nothing is let through and the middleware says so once, as `on_missing_field` says. With it on, a condition can name the verdict too: `Condition::from([("user_agent", Condition::from([("verdict", "spoofed")]))])` refuses a request posing as a crawler.
 
 Replace the refusal with `on_blocked`:
 
