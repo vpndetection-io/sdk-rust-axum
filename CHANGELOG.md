@@ -2,6 +2,12 @@
 
 What each release changed for you, newest first. Each line is a commit's summary, linked to its full description and diff. Releases before 3.0.3 are described by their release commits.
 
+## 4.0.10 - 2026-11-26
+
+### Fixes
+
+- Require vpndetection 6.6.1: a condition on the verdict is no plan gap for a request that sent no agent ([`2bd2d86`](https://github.com/vpndetection-io/sdk-rust-axum/commit/2bd2d86291db0e2b0620c788a0f618e9d6fe7b16))
+
 ## 4.0.9 - 2026-11-26
 
 ### Features
