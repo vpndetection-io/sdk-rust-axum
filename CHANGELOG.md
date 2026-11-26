@@ -2,6 +2,12 @@
 
 What each release changed for you, newest first. Each line is a commit's summary, linked to its full description and diff. Releases before 3.0.3 are described by their release commits.
 
+## 4.0.9 - 2026-11-26
+
+### Features
+
+- Require vpndetection 6.6.0: allow_bots sends only a crawler's User-Agent, at most four an address ([`102c225`](https://github.com/vpndetection-io/sdk-rust-axum/commit/102c2254474be75b1e4f5e280b72c22447f0d847))
+
 ## 4.0.8 - 2026-11-25
 
 ### Fixes
