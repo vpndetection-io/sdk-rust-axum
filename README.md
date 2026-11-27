@@ -18,7 +18,7 @@ cargo add vpndetection-axum vpndetection
 
 Requires Rust 1.85 or newer, and axum 0.8.
 
-No API key needed to start. Without one, a lookup is on Unlimited, the free plan, which answers VPN, Tor, relay and bot detection with no daily or monthly cap. A paid plan's key adds the hosting, CDN and proxy flags, the provider behind each flag and `bot`, whose bot uses the address: create one in the [console](https://app.vpndetection.io). A free account tries every field.
+No API key needed to start. Without one, a lookup is on Unlimited, the free plan, which answers VPN, Tor and relay detection with no daily or monthly cap. A paid plan's key adds the hosting, CDN and proxy flags, the provider behind each flag, `is_bot` and `bot` (whether a bot uses the address, and whose) and the network's type: create one in the [console](https://app.vpndetection.io). A free account tries every field.
 
 ```rust
 use axum::{Router, routing::get};
@@ -90,7 +90,7 @@ vec![
 Condition::from([("bot", Condition::from([("verified", true)]))]);
 ```
 
-Values are matched by equality, strings without regard to case. A `Vec` means any-of. `Bound::gte`, `gt`, `lte` and `lt` compare numbers and chain into a range (`Bound::gte(5.0).and_lt(100.0)`); every bound you give must hold. A member the answer holds as a list (`web`, `pubproxy.protocols`, `bittorrent.clients`, `bot.agents`, `bot.categories`) is never matched, so block on its flag alone (`is_bot`, on every plan). Members set to `false` or `Value::Null` are ignored, so a condition states the signals you act on; one that constrains nothing would match every request, and is refused when the middleware is built rather than silently blocking all your traffic.
+Values are matched by equality, strings without regard to case. A `Vec` means any-of. `Bound::gte`, `gt`, `lte` and `lt` compare numbers and chain into a range (`Bound::gte(5.0).and_lt(100.0)`); every bound you give must hold. A member the answer holds as a list (`web`, `pubproxy.protocols`, `bittorrent.clients`, `bot.agents`, `bot.categories`) is never matched, so block on its flag alone (`is_bot`, on a paid plan or the trial). Members set to `false` or `Value::Null` are ignored, so a condition states the signals you act on; one that constrains nothing would match every request, and is refused when the middleware is built rather than silently blocking all your traffic.
 
 A policy that lives in your app's config rather than in its source is read with `from_json`, which takes the same shape:
 
@@ -116,7 +116,7 @@ Options::new()
 # Ok::<(), Box<dyn std::error::Error>>(())
 ```
 
-It is off by default, so the cache holds one answer per address rather than one per agent. Any other agent, or none, is not sent, since its verdict could only be `not_bot`. One address is looked up with at most four crawler agents an hour: past those its lookup sends none, and a request passes as a crawler only where the answer's `bot.verified` is true. A verdict comes with a paid plan or the trial: without a key, or past the trial, no answer carries one, so nothing is let through and the middleware says so once, as `on_missing_field` says. With it on, a condition can name the verdict too: `Condition::from([("user_agent", Condition::from([("verdict", "spoofed")]))])` refuses a request posing as a crawler.
+It is off by default, so the cache holds one answer per address rather than one per agent. Any other agent, or none, is not sent, since its verdict could only be `not_bot`. One address is looked up with at most four crawler agents an hour: past those its lookup sends none, and a request passes as a crawler only where the answer's `bot.verified` is true. A verdict comes with a paid plan or the trial: without a key, or past the trial, no answer carries one, so nothing is let through and the middleware says so once, as `on_missing_field` says. `bot` is a paid plan's too, so an app with no key gets no bot pass. With it on, a condition can name the verdict too: `Condition::from([("user_agent", Condition::from([("verdict", "spoofed")]))])` refuses a request posing as a crawler.
 
 Replace the refusal with `on_blocked`:
 
@@ -197,7 +197,7 @@ Beyond a few million distinct visitors a day, stop calling the API per request: 
 
 ## Absent is not false
 
-Unlimited, with a key or without one, leaves out `is_hosting`, `is_cdn`, the four proxy flags, the carrier, satellite and service flags, `bot`, `company` and `abuse`, and of the detail behind each flag it answers only Tor's and relay's. A field your plan does not include is `None`, which means "not in your plan" rather than "checked, and no".
+Unlimited, with a key or without one, leaves out `is_hosting`, `is_cdn`, the four proxy flags, `is_bot`, the carrier, satellite and service flags, `bot`, `company`, `abuse` and the network's type in `asn`, and of the detail behind each flag it answers only Tor's and relay's. A field your plan does not include is `None`, which means "not in your plan" rather than "checked, and no". The exception is `asn.type`, which stays a `String` and reads empty there until the next major of `vpndetection`.
 
 ```rust
 # fn f(result: &vpndetection::Lookup) -> bool {
@@ -205,7 +205,7 @@ result.is_hosting.unwrap_or(false)   // when you only want the flag
 # }
 ```
 
-A `block_condition` naming a member your plan does not serve can never match, so the middleware warns once instead of failing silently. Set `on_missing_field(OnMissingField::Fail)` to make it an error.
+A `block_condition` naming a member your plan does not serve, `is_bot` or `asn.type` on Unlimited included, can never match and is reported by its path, so the middleware warns once instead of failing silently. Set `on_missing_field(OnMissingField::Fail)` to make it an error.
 
 ## Other Libraries
 
