@@ -2,6 +2,12 @@
 
 What each release changed for you, newest first. Each line is a commit's summary, linked to its full description and diff. Releases before 3.0.3 are described by their release commits.
 
+## 4.0.11 - 2026-11-27
+
+### Features
+
+- Require vpndetection 6.7.0: a keyless answer without the AS's type reads ([`c73d1e8`](https://github.com/vpndetection-io/sdk-rust-axum/commit/c73d1e840389df11904bdc816fecfb6e10a44812))
+
 ## 4.0.10 - 2026-11-26
 
 ### Fixes
