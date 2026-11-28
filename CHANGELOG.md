@@ -2,6 +2,12 @@
 
 What each release changed for you, newest first. Each line is a commit's summary, linked to its full description and diff. Releases before 3.0.3 are described by their release commits.
 
+## 4.0.12 - 2026-11-28
+
+### Fixes
+
+- Require vpndetection 6.7.1: a bogon's answer reports no missing member ([`097c963`](https://github.com/vpndetection-io/sdk-rust-axum/commit/097c9636ab44fa10dddf2169bef778572e8a53b7))
+
 ## 4.0.11 - 2026-11-27
 
 ### Features
