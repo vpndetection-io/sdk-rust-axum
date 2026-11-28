@@ -4,7 +4,7 @@
 // is answered locally and would pass all of this vacuously.
 
 use std::collections::HashMap;
-use std::net::SocketAddr;
+use std::net::{IpAddr, SocketAddr};
 use std::sync::{Arc, Mutex};
 
 use axum::Router;
@@ -14,7 +14,7 @@ use axum::routing::get;
 use http::{Request, StatusCode};
 use serde_json::{Value, json};
 use tower::ServiceExt;
-use vpndetection::middleware::{Condition, Options};
+use vpndetection::middleware::{Condition, OnMissingField, Options};
 use vpndetection_axum::{MaybeFound, VPNDetection};
 
 const PEER: &str = "66.249.66.1";
@@ -83,6 +83,10 @@ fn app(base_url: &str, allow_bots: bool) -> Router {
 }
 
 async fn call(app: Router, user_agent: Option<&str>) -> (StatusCode, Value) {
+    call_from(app, PEER, user_agent).await
+}
+
+async fn call_from(app: Router, peer: &str, user_agent: Option<&str>) -> (StatusCode, Value) {
     let mut request = Request::builder().uri("/");
     if let Some(agent) = user_agent {
         request = request.header(http::header::USER_AGENT, agent);
@@ -90,7 +94,7 @@ async fn call(app: Router, user_agent: Option<&str>) -> (StatusCode, Value) {
     let mut request = request.body(Body::empty()).expect("request");
     // The request is built by hand, so no client put a User-Agent of its own on it.
     assert_eq!(request.headers().contains_key(http::header::USER_AGENT), user_agent.is_some());
-    let addr: SocketAddr = format!("{PEER}:54321").parse().expect("peer");
+    let addr = SocketAddr::new(peer.parse::<IpAddr>().expect("peer"), 54321);
     request.extensions_mut().insert(ConnectInfo(addr));
     let answer = app.oneshot(request).await.expect("call");
     let status = answer.status();
@@ -135,4 +139,55 @@ async fn a_request_without_a_user_agent_sends_none() {
     let (status, _) = call(app(&base_url, true), None).await;
     assert_eq!(status, StatusCode::FORBIDDEN);
     assert_eq!(api.agents(), [None]);
+}
+
+/// A bogon peer, local development behind no proxy, sending a crawler's agent
+/// under a condition naming the verdict: the core answers it locally and the
+/// request passes, rather than answering 500 under `Fail` or logging a plan gap
+/// under `Warn`. Every other test here has a public peer, which this one does
+/// not stand in for.
+#[tokio::test]
+async fn a_bogon_peer_with_a_crawler_agent_is_no_plan_gap() {
+    for peer in ["127.0.0.1", "10.0.0.1", "::1"] {
+        for action in [OnMissingField::Fail, OnMissingField::Warn] {
+            let (base_url, api) = Api::start(Some("spoofed")).await;
+            let warned = Arc::new(Mutex::new(Vec::<String>::new()));
+            let sink = Arc::clone(&warned);
+            let options = Options::new()
+                .api_key("key")
+                .allow_bots(true)
+                .on_missing_field(action)
+                .on_warn(Arc::new(move |message: &str| {
+                    sink.lock().unwrap().push(message.to_owned())
+                }))
+                .block_condition(vec![Condition::from([(
+                    "user_agent",
+                    Condition::from([("verdict", "spoofed")]),
+                )])])
+                .base_url(&base_url);
+            let app = Router::new()
+                .route(
+                    "/",
+                    get(|MaybeFound(found): MaybeFound| async move {
+                        let result = found.as_ref().and_then(|f| f.result.as_ref());
+                        axum::Json(json!({ "bogon": result.map(|r| r.is_bogon) }))
+                    }),
+                )
+                .layer(VPNDetection::new(options).expect("build"));
+
+            let (status, body) = call_from(app, peer, Some(GOOGLEBOT)).await;
+            assert_eq!(status, StatusCode::OK, "{peer}, {action:?}: {body}");
+            assert_eq!(body, json!({ "bogon": true }), "{peer}, {action:?}");
+            assert_eq!(
+                api.agents(),
+                Vec::<Option<String>>::new(),
+                "{peer}, {action:?}: reached the API"
+            );
+            let warned = warned.lock().unwrap();
+            assert!(
+                warned.iter().all(|message| !message.contains("does not include")),
+                "{peer}, {action:?}: {warned:?}"
+            );
+        }
+    }
 }
